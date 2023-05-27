@@ -1,0 +1,36 @@
+name: 'sbert_tokenizer'
+backend: 'python'
+max_batch_size: 4
+input: [
+    {
+        name: 'question',
+        data_type: TYPE_STRING,
+        dims: [-1]
+    },
+    {
+        name: 'list_index_selection',
+        data_type: TYPE_STRING,
+        dims: [-1]
+    },
+]
+output [
+    {
+        name: 'input_ids',
+        data_type: TYPE_INT64,
+        dims: [-1]
+    }
+]
+output [
+    {
+        name: 'attention_mask',
+        data_type: TYPE_INT64,
+        dims: [-1]
+    }
+]
+output [
+    {
+        name: 'words_length',
+        data_type: TYPE_INT64,
+        dims: [-1]
+    }
+]
