@@ -25,6 +25,8 @@ class TritonPythonModel:
         for request in requests:
             in_0 = pb_utils.get_input_tensor_by_name(request, 'question')
             print(in_0)
+            in_0 = in_0[0].decode('utf-8')
+            print(in_0)
             mapping_idx_score = self.bm25_scoring.get_top_k(in_0, self.top_k)
             print(mapping_idx_score)
             output0 = pb_utils.Tensor('bm25_index_selection', np.array(mapping_idx_score.keys()).astype(self.output0_dtype))
