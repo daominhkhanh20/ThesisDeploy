@@ -1,0 +1,6 @@
+export PYTHONNOUSERSITE=True
+
+parameters: {
+  key: "EXECUTION_ENV_PATH",
+  value: {string_value: "/home/iman/miniconda3/envs/python-3-6/python3.6.tar.gz"}
+}
