@@ -12,6 +12,7 @@ class TritonPythonModel:
         path_json_data = model_config['parameters']['path_corpus']['string_value']
         self.top_k = int(model_config['parameters']['top_k']['string_value'])
         data = load_json_data(path_json_data)
+        print('load data done')
         self.bm25_scoring = BM25Scoring(corpus=[document['context'] for document in data])
         output0_config = pb_utils.get_output_config_by_name(
             model_config, 'bm25_index_selection'
@@ -19,6 +20,7 @@ class TritonPythonModel:
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             output0_config['data_type']
         )
+        print(model_config)
         
     def execute(self, requests):
         responses = []
