@@ -1,0 +1,17 @@
+name: 'ensemble'
+platform: 'ensemble'
+max_batch_size: 4
+
+input [
+    {
+        name: 'question',
+        data_type: TYPE_STRING,
+        dim: [-1]
+    }
+]
+
+output [
+    {
+        name
+    }
+]
