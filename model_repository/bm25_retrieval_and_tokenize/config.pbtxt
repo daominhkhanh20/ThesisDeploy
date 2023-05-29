@@ -1,4 +1,4 @@
-name: 'bm25_retrieval'
+name: 'bm25_retrieval_and_tokenize'
 backend: 'python'
 max_batch_size: 4
 input: [
@@ -15,27 +15,24 @@ output [
         dims: [-1]
     }
 ]
-
 output [
     {
         name: 'sbert_input_ids',
-        data_type: TYPE_INT32,
+        data_type: TYPE_INT64,
         dims: [-1]
     }
 ]
-
 output [
     {
         name: 'sbert_attention_mask',
-        data_type: TYPE_INT32,
+        data_type: TYPE_INT64,
         dims: [-1]
     }
 ]
-
 output [
     {
-        name: 'sbert_token_type_ids',
-        data_type: TYPE_INT32,
+        name: 'token_type_ids',
+        data_type: TYPE_INT64,
         dims: [-1]
     }
 ]
@@ -45,18 +42,18 @@ instance_group [{ kind: KIND_CPU }]
 parameters: [
      {
 	key: "EXECUTION_ENV_PATH",
-        value: {string_value: "model/dev.tar.gz"}
+        value: {string_value: "model_repository/dev.tar.gz"}
      },
      {
         key: 'path_corpus',
         value: {
-            string_value: "model/corpus.json"
+            string_value: "model_repository/corpus.json"
         }
     },
     {
         key: 'top_k',
         value: {
-            string_value: '5'
+            string_value: '10'
         }
     }
 ]
