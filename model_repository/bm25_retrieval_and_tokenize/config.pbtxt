@@ -31,9 +31,16 @@ output [
 ]
 output [
     {
-        name: 'token_type_ids',
+        name: 'sbert_token_type_ids',
         data_type: TYPE_INT64,
         dims: [-1]
+    }
+]
+output [
+    {
+        name: 'top_k_sbert',
+        data_type: TYPE_INT64,
+        dims: [1]
     }
 ]
 
@@ -51,9 +58,15 @@ parameters: [
         }
     },
     {
-        key: 'top_k',
+        key: 'top_k_bm25',
         value: {
             string_value: '10'
+        }
+    },
+    {
+        key: 'top_k_sbert',
+        value: {
+            string_value: '3'
         }
     }
 ]
