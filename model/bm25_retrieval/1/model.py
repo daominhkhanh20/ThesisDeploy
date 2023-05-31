@@ -21,27 +21,27 @@ class TritonPythonModel:
         self.bm25_scoring = BM25Scoring(corpus=[document['context'] for document in data])
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
-                model_config, 'bm25_index_selection'
+                model_config, 'index_selection'
             )['data_type']
         )
         self.output1_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
-                model_config, 'sbert_input_ids'
+                model_config, 'sentence_bert_input_ids'
             )['data_type']
         )
         self.output2_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
-                model_config, 'sbert_attention_mask'
+                model_config, 'sentence_bert_attention_mask'
             )['data_type']
         )
         self.output3_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
-                model_config, 'sbert_token_type_ids'
+                model_config, 'sentence_bert_token_type_ids'
             )['data_type']
         )
         self.output4_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
-                model_config, 'top_k_sbert'
+                model_config, 'top_k'
             )['data_type']
         )
         self.encoder = SentenceTransformer('khanhbk20/vn-sentence-embedding', device='cpu')
@@ -53,11 +53,11 @@ class TritonPythonModel:
             sentence = in_0.as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
             mapping_idx_score = self.bm25_scoring.get_top_k(sentence, self.top_k_bm25)
             output_tokenizer = self.encoder.tokenize([sentence])
-            output0 = pb_utils.Tensor('bm25_index_selection', np.array(list(mapping_idx_score.keys())).astype(self.output0_dtype))
-            output1 = pb_utils.Tensor('sbert_input_ids', np.array(output_tokenizer['input_ids']).astype(self.output1_dtype))
-            output2 = pb_utils.Tensor('sbert_attention_mask', np.array(output_tokenizer['attention_mask']).astype(self.output2_dtype))
-            output3 = pb_utils.Tensor('sbert_token_type_ids', np.array(output_tokenizer['sbert_token_type_ids']).astype(self.output3_dtype))
-            output4 = pb_utils.Tensor('top_k_sbert', np.array([self.top_k_sbert]).astype(self.output4_dtype))
+            output0 = pb_utils.Tensor('index_selection', np.array(list(mapping_idx_score.keys())).astype(self.output0_dtype).reshape(1, -1))
+            output1 = pb_utils.Tensor('sentence_bert_input_ids', np.array(output_tokenizer['input_ids']).astype(self.output1_dtype))
+            output2 = pb_utils.Tensor('sentence_bert_attention_mask', np.array(output_tokenizer['attention_mask']).astype(self.output2_dtype))
+            output3 = pb_utils.Tensor('sentence_bert_token_type_ids', np.array(output_tokenizer['token_type_ids']).astype(self.output3_dtype))
+            output4 = pb_utils.Tensor('top_k', np.array([self.top_k_sbert]).astype(self.output4_dtype).reshape(1, -1))
             
             responses.append(
                 pb_utils.InferenceResponse(output_tensors=[output0, output1, output2, output3, output4])

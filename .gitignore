@@ -1,1 +1,4 @@
 model/*.tar.gz
+model/qa_model/1/model.pt
+model/sbert_retrieval/1/model.pt
+model_repository/qa_model/1/model.pt

@@ -19,7 +19,7 @@ input [
     },
     {
         name: 'bm25_index_selection',
-        data_type: TYPE_INT32,
+        data_type: TYPE_INT64,
         dims: [-1]
     },
     {
@@ -31,14 +31,21 @@ input [
 output [
     {
         name: 'sbert_index_selection',
-        data_type: TYPE_INT32,
+        data_type: TYPE_INT64,
         dims: [-1]
-    },
+    }
+]
+
+output [
     {
         name: 'sbert_input_ids',
         data_type: TYPE_INT64,
         dims: [-1]
-    },
+    }
 ]
 
-instance_group [{ kind: KIND_CPU }]
+instance_group [
+    { 
+        kind: KIND_CPU 
+    }
+]

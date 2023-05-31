@@ -10,41 +10,45 @@ input: [
 ]
 output [
     {
-        name: 'bm25_index_selection',
-        data_type: TYPE_INT32,
-        dims: [-1]
-    }
-]
-output [
-    {
-        name: 'sbert_input_ids',
+        name: 'index_selection',
         data_type: TYPE_INT64,
         dims: [-1]
     }
 ]
 output [
     {
-        name: 'sbert_attention_mask',
+        name: 'sentence_bert_input_ids',
         data_type: TYPE_INT64,
         dims: [-1]
     }
 ]
 output [
     {
-        name: 'sbert_token_type_ids',
+        name: 'sentence_bert_attention_mask',
         data_type: TYPE_INT64,
         dims: [-1]
     }
 ]
 output [
     {
-        name: 'top_k_sbert',
+        name: 'sentence_bert_token_type_ids',
+        data_type: TYPE_INT64,
+        dims: [-1]
+    }
+]
+output [
+    {
+        name: 'top_k',
         data_type: TYPE_INT64,
         dims: [1]
     }
 ]
 
-instance_group [{ kind: KIND_CPU }]
+instance_group [
+    { 
+        kind: KIND_CPU 
+    }
+]
 
 parameters: [
      {
