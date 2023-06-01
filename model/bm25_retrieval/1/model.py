@@ -4,21 +4,28 @@ import json
 import numpy as np 
 import os
 from e2eqavn.processor import BM25Scoring
-from e2eqavn.utils.io import load_json_data
-from torch.utils.dlpack import from_dlpack
+from e2eqavn.documents import Corpus
+from e2eqavn.utils.io import load_json_data, load_yaml_file
+from e2eqavn.keywords import *
 from sentence_transformers import SentenceTransformer
-
+import sys 
+sys.stdout.reconfigure(encoding="utf-8")
 
 
 class TritonPythonModel:
     def initialize(self, args):
         model_config = json.loads(args['model_config'])
         path_json_data = model_config['parameters']['path_corpus']['string_value']
+        path_config = model_config['parameters']['path_config']['string_value']
+        
         self.top_k_bm25 = int(model_config['parameters']['top_k_bm25']['string_value'])
         self.top_k_sbert = int(model_config['parameters']['top_k_sbert']['string_value'])
-        with open(path_json_data, 'r',encoding="utf-8") as file:
-            data = json.load(file)
-        self.bm25_scoring = BM25Scoring(corpus=[document['context'] for document in data])
+        config_pipeline = load_yaml_file(path_config)
+        corpus = Corpus.parser_uit_squad(
+            config_pipeline[DATA][PATH_TRAIN],
+            **config_pipeline.get(CONFIG_DATA, {})
+        )
+        self.bm25_scoring = BM25Scoring(corpus=[doc.document_context for doc in corpus.list_document])
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
                 model_config, 'index_selection'

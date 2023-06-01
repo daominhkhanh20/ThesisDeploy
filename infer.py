@@ -10,11 +10,11 @@ from tritonclient.utils import np_to_triton_dtype
 
 
 input_name = ['query']
-output_name = ['final_retrieval_stage_selection', 'retrieval_input_ids']
+output_name = ['e2e_answer']
 
 def run_inference(sentence, model_name='ensemble_model', url='127.0.0.1:8000', model_version='1'):
     triton_client = tritonhttpclient.InferenceServerClient(
-        url=url, verbose=1
+        url=url, verbose=False
     )
     input_feature = np.array([bytes(sentence, 'utf8')], dtype=np.bytes_).reshape(1, 1)
     
@@ -29,14 +29,13 @@ def run_inference(sentence, model_name='ensemble_model', url='127.0.0.1:8000', m
         )
     response = triton_client.infer(model_name=model_name, model_version=model_version, inputs=[input0], outputs=list_output)
     for out in output_name:
-        print(response.as_numpy(out))
+        print(f"{out} {response.as_numpy(out).shape}")
     
-    print(response.as_numpy('query'))
     
     
 if __name__ == '__main__':
     import time 
     start_time = time.time()
-    sentence = 'Paris nằm ở điểm gặp nhau của các hành trình'
+    sentence = 'Tên gọi nào được Phạm Văn Đồng sử dụng khi làm Phó chủ nhiệm cơ quan Biện sự xứ tại Quế Lâm?'
     run_inference(sentence)
     print(time.time() - start_time)

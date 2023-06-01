@@ -52,13 +52,19 @@ instance_group [
 
 parameters: [
      {
-	key: "EXECUTION_ENV_PATH",
+	    key: "EXECUTION_ENV_PATH",
         value: {string_value: "model/dev.tar.gz"}
      },
      {
         key: 'path_corpus',
         value: {
             string_value: "model/corpus.json"
+        }
+    },
+    {
+        key: 'path_config',
+        value: {
+            string_value: "model/train_qa.yaml"
         }
     },
     {
