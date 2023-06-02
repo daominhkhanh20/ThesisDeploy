@@ -56,8 +56,9 @@ class TritonPythonModel:
                 start_location=start_location,
                 end_location=end_location
             )
+            output0 = pb_utils.Tensor(self.output_names[0], np.array([answer.encode('utf-8')], dtype=np.bytes_).reshape(1, -1))
             responess.append(
-                pb_utils.InferenceResponse(output_tensors=[answer])
+                pb_utils.InferenceResponse(output_tensors=[output0])
             )
         return responess
             

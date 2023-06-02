@@ -29,7 +29,7 @@ def run_inference(sentence, model_name='ensemble_model', url='127.0.0.1:8000', m
         )
     response = triton_client.infer(model_name=model_name, model_version=model_version, inputs=[input0], outputs=list_output)
     for out in output_name:
-        print(f"{out} {response.as_numpy(out).shape}")
+        print(f"{out} {response.as_numpy(out)}")
     
     
     
