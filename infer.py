@@ -14,7 +14,7 @@ output_name = ['e2e_answer']
 
 def run_inference(sentence, model_name='ensemble_model', url='149.36.0.214:13669', model_version='1'):
     triton_client = tritonhttpclient.InferenceServerClient(
-        url=url, verbose=False
+        url=url, verbose=1
     )
     input_feature = np.array([bytes(sentence, 'utf8')], dtype=np.bytes_).reshape(1, 1)
     
