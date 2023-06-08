@@ -31,8 +31,11 @@ class TritonPythonModel:
         return best_index, start_idxs[best_index].item(), end_idxs[best_index].item()
     
     def parser_answer(self, input_ids, words_length, start_location, end_location):
-        answer_start_idx = sum(words_length[: start_location]).item()
-        answer_end_idx = sum(words_length[: end_location + 1]).item()
+        print(words_length)
+        answer_start_idx = sum(words_length[: start_location])
+        answer_end_idx = sum(words_length[: end_location + 1])
+        print(answer_start_idx)
+        print(answer_end_idx)
         return self.tokenizer.convert_tokens_to_string(
                     self.tokenizer.convert_ids_to_tokens(input_ids[answer_start_idx:answer_end_idx])
                 )
@@ -50,6 +53,7 @@ class TritonPythonModel:
             align_matrix = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[3]).as_numpy())
             words_length = torch.sum(align_matrix, dim=-1).to(torch.int32)
             best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits)
+            print(best_choice)
             answer = self.parser_answer(
                 input_ids=input_ids[best_choice, :].reshape(-1),
                 words_length=words_length[best_choice, :].reshape(-1),

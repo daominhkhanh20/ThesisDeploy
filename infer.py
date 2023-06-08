@@ -12,7 +12,7 @@ from tritonclient.utils import np_to_triton_dtype
 input_name = ['query']
 output_name = ['e2e_answer']
 
-def run_inference(sentence, model_name='ensemble_model', url='149.36.0.80:40393', model_version='1'):
+def run_inference(sentence, model_name='ensemble_model', url='0.0.0.0:8000', model_version='1'):
     triton_client = tritonhttpclient.InferenceServerClient(
         url=url, verbose=1
     )
@@ -36,6 +36,6 @@ def run_inference(sentence, model_name='ensemble_model', url='149.36.0.80:40393'
 if __name__ == '__main__':
     import time 
     start_time = time.time()
-    sentence = 'Cơ sở giáo dục phương Tây đầu tiên có thể được gọi là gì?'
+    sentence = 'Cơ sở giáo dục phương Tây đầu tiên có thể được gọi là gì'
     run_inference(sentence)
     print(time.time() - start_time)
