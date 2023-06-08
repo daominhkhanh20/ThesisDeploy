@@ -21,8 +21,8 @@ class TritonPythonModel:
         self.top_k_bm25 = int(model_config['parameters']['top_k_bm25']['string_value'])
         self.top_k_sbert = int(model_config['parameters']['top_k_sbert']['string_value'])
         config_pipeline = load_yaml_file(path_config)
-        corpus = Corpus.parser_uit_squad(
-            config_pipeline[DATA][PATH_TRAIN],
+        corpus = Corpus.init_corpus(
+            path_data=config_pipeline[DATA][PATH_TRAIN],
             **config_pipeline.get(CONFIG_DATA, {})
         )
         self.bm25_scoring = BM25Scoring(corpus=[doc.document_context for doc in corpus.list_document])
