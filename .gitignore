@@ -1,7 +1,8 @@
 model/*.tar.gz
-model/qa_model/1/model.pt
-model/sbert_retrieval/1/model.pt
+backend/model/qa_model/1/model.pt
+backend/model/sbert_retrieval/1/model.pt
 model_repository/qa_model/1/model.pt
 model/corpus.json
 backend/model/dev.tar.gz
 backend/model/corpus.json
+
