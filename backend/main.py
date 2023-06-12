@@ -24,7 +24,7 @@ def answer_question(sentence: str):
         bytes(sentence, 'utf-8'), dtype=np.bytes_
     ).reshape(1, 1)
     
-    input0 = tritonhttpclient.InferInput(INPUT_NAME, input0.shape, np_to_triton_dtype(input0.dtype))
+    input0 = tritonhttpclient.InferInput(INPUT_NAME, input_feature.shape, np_to_triton_dtype(input_feature.dtype))
     list_output = []
     for out in OUTPUT_NAMES:
         list_output.append(
