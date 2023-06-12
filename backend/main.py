@@ -18,7 +18,7 @@ triton_client = tritonhttpclient.InferenceServerClient(
     verbose=VERBOSE
 )
 
-@app.post
+@app.post('/answer')
 def answer_question(sentence: str):
     input_feature = np.array(
         bytes(sentence, 'utf-8'), dtype=np.bytes_
