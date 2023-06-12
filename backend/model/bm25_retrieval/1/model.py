@@ -51,6 +51,7 @@ class TritonPythonModel:
                 model_config, 'top_k'
             )['data_type']
         )
+        self.logger = pb_utils.Logger
         self.encoder = SentenceTransformer('khanhbk20/vn-sentence-embedding', device='cpu')
         
     def execute(self, requests):
@@ -59,6 +60,7 @@ class TritonPythonModel:
             in_0 = pb_utils.get_input_tensor_by_name(request, 'question')
             sentence = in_0.as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
             mapping_idx_score = self.bm25_scoring.get_top_k(sentence, self.top_k_bm25)
+            self.logger.log_info(f"BM25 mapping score: {mapping_idx_score}")
             output_tokenizer = self.encoder.tokenize([sentence])
             output0 = pb_utils.Tensor('index_selection', np.array(list(mapping_idx_score.keys())).astype(self.output0_dtype).reshape(1, -1))
             output1 = pb_utils.Tensor('sentence_bert_input_ids', np.array(output_tokenizer['input_ids']).astype(self.output1_dtype))

@@ -22,7 +22,6 @@ async def root():
 
 @app.get('/answer')
 def answer_question(sentence: str):
-    print(sentence)
     input_feature = np.array([bytes(sentence, 'utf8')], dtype=np.bytes_).reshape(1, 1)
     
     input0 = tritonhttpclient.InferInput(INPUT_NAMES[0], input_feature.shape, np_to_triton_dtype(input_feature.dtype))
@@ -34,6 +33,5 @@ def answer_question(sentence: str):
                 out, binary_data=False
             )
         )
-    print(input_feature)
     response = triton_client.infer(model_name=MODEL_NAME, model_version=MODEL_VERSION, inputs=[input0], outputs=list_output)
     return {'answer': response.as_numpy('e2e_answer')[0][0]}

@@ -43,6 +43,7 @@ class TritonPythonModel:
                 model_config, self.output_names[2]
             )['data_type']
         )
+        self.logger = pb_utils.Logger
     
     def decode(self, input_ids):
         return self.sbert_tokenizer.decode(input_ids, skip_special_tokens=True)
@@ -52,7 +53,7 @@ class TritonPythonModel:
         responses = []
         for request in requests:
             index_selections = pb_utils.get_input_tensor_by_name(request, self.input_names[0]).as_numpy()[0]
-            print(f"index select: {index_selections}")
+            self.logger.log_info(f"Sbert index selection: {index_selections}")
             question = pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
             input_feature_raw = make_input_feature_qa(
                 questions=[question] * len(index_selections),
@@ -62,7 +63,7 @@ class TritonPythonModel:
             )
             input_features = self.data_collator(input_feature_raw)
             for key, value in input_features.items():
-                print(f"{key} -- {value.size()}")
+                self.logger.log_info(f"{key} -- {value.size()}")
             output0 = pb_utils.Tensor(self.output_names[0], np.array(input_features[self.output_names[0]]))
             output1 = pb_utils.Tensor(self.output_names[1], np.array(input_features[self.output_names[1]]))
             output2 = pb_utils.Tensor(self.output_names[2], np.array(input_features[self.output_names[2]]))
