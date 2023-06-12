@@ -1,7 +1,5 @@
-import typing 
 from fastapi import FastAPI
 import numpy as np 
-import tritonclient 
 from tritonclient.utils import np_to_triton_dtype
 import tritonhttpclient
 
