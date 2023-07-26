@@ -1,63 +1,93 @@
-import React, { useState } from 'react';
+import './App.css';
+import './normal.css'
+// import setState
+import React from 'react';
+import { useState, useEffect } from 'react'
+import ChatMessage from './components/ChatMessage';
 
-const SearchBar = ({ handleSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+function App() {
 
-  const handleChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  // add state for input and chat log
+  const [input, setInput] = useState("")
+  const [models, setModels] = useState([])
+  const [chatLog, setChatLog] = useState([])
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    handleSearch(searchTerm);
-  };
+  // use effect run once when app loads
+
+
+  // clear chats
+  function clearChat() {
+    setChatLog([])
+  }
+
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    let chatLogNew = [...chatLog, { user: "User", message: `${input}` }]// spread operator and adding input to chat log
+    setInput("") // setting input to blank
+    setChatLog(chatLogNew)
+
+    // fetch response to the api combining the chat log
+    // array of messages and sending it as a message to localhost:3000 as a POST
+    // LISTENING ON PORT 3080
+
+    const messages = chatLogNew.map((message) => message.message).join("\n") // looping through messages after setting and joining together
+    const users = chatLogNew.map((user) => user.user).join("\n")
+    console.log("Users array chat: ", users)
+
+    const response = await fetch("http://0.0.0.0:4000/answer", {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Credentials": "true", 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: messages,
+        users: users,
+      })
+    });
+
+    // CHAT GPT RESPONSE
+    const data = await response.json();
+    setChatLog([...chatLogNew, { user: "gpt", message: `${data.message}` }])
+    console.log(data.message);
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={handleChange}
-        placeholder="Search..."
-      />
-      <button type="submit">Search</button>
-    </form>
-  );
-};
+    <div className="App">
 
-const SearchResult = ({ results }) => {
-  return (
-    <div className="result-container">
-      {results.map((result) => (
-        <div key={result.id} className="result-item">
-          <a href={result.link}>{result.title}</a>
-          <p>{result.description}</p>
+      {/* sidemenu */}
+      <aside className="sidemenu">
+        <div className="side-menu-button" onClick={clearChat}>
+          <span>+</span>
+          Giáo dục
         </div>
-      ))}
+
+        {/* models */}
+
+      </aside>
+
+      {/* chatbox */}
+      <section className="chatbox">
+        <div className="chat-log">
+          {chatLog.map((message, index) => {
+            return (
+              <ChatMessage key={index} message={message} />
+            );
+          }
+          )}
+        </div>
+        {/* chat input box */}
+        <div className="chat-input-holder">
+          <form onSubmit={handleSubmit}>
+            <input className="chat-input-textarea" rows="1" value={input} onChange={(e) => setInput(e.target.value)}>
+            </input>
+          </form>
+        </div>
+      </section>
+
     </div>
   );
-};
-
-const App = () => {
-  const [searchResults, setSearchResults] = useState([]);
-
-  const handleSearch = (searchTerm) => {
-    // Simulated API call or search logic
-    const results = [
-      { id: 1, title: 'Result 1', description: 'Description for Result 1', link: '#' },
-      { id: 2, title: 'Result 2', description: 'Description for Result 2', link: '#' },
-      { id: 3, title: 'Result 3', description: 'Description for Result 3', link: '#' },
-    ];
-
-    setSearchResults(results);
-  };
-
-  return (
-    <div className="app">
-      <SearchBar handleSearch={handleSearch} />
-      <SearchResult results={searchResults} />
-    </div>
-  );
-};
+}
 
 export default App;
