@@ -2,10 +2,10 @@ import React from 'react'
 
 const ChatMessage = ({ message }) => {
     return (
-        <div className={`chat-message ${message.user === "gpt" && "chatgpt"}`}>
+        <div className={`chat-message ${message.user === "Bot" && "chatgpt"}`}>
             <div className="chat-message-center">
-                <div className={`avatar ${message.user === "gpt" && "chatgpt"}`}>
-                    {message.user === "gpt" && <svg
+                <div className={`avatar ${message.user === "Bot" && "chatgpt"}`}>
+                    {message.user === "Bot" && <svg
                         width={41}
                         height={41}
                         fill="none"
