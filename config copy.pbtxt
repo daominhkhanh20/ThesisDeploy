@@ -12,10 +12,20 @@ input: [
 
 output [
     {   
-    name: "e2e_answer"
-    data_type: TYPE_STRING
-    dims: [-1]
-  }
+        name: "qa_input_ids"
+        data_type: TYPE_INT64
+        dims: [-1]
+    },
+    {   
+        name: "qa_attention_mask"
+        data_type: TYPE_INT64
+        dims: [-1]
+    },
+    {   
+        name: "qa_align_matrix"
+        data_type: TYPE_FP32
+        dims: [-1]
+    }
 ]
 
 
@@ -101,6 +111,10 @@ ensemble_scheduling{
                 key: 'query_user',
                 value: 'query'
             },
+            input_map {
+                key: 'score',
+                value: 'retrieval_scores_pipeline'
+            },
             output_map {
                 key: 'input_ids',
                 value: 'qa_input_ids'
@@ -113,66 +127,6 @@ ensemble_scheduling{
                 key: 'align_matrix',
                 value: 'qa_align_matrix'
             }
-        },
-        {
-            model_name: 'qa_model',
-            model_version: -1,
-            input_map {
-                key: 'mrc_input_ids',
-                value: 'qa_input_ids'
-            },
-            input_map {
-                key: 'mrc_input_mask',
-                value: 'qa_attention_mask'
-            },
-            input_map {
-                key: 'mrc_input_align_matrix',
-                value: 'qa_align_matrix'
-            },
-            output_map {
-                key: 'start_logits',
-                value: 'mrc_start_logits'
-            },
-            output_map {
-                key: 'end_logits',
-                value: 'mrc_end_logits'
-            },
-            output_map {
-                key: 'input_ids',
-                value: 'mrc_input_ids'
-            },
-            output_map {
-                key: 'align_matrix',
-                value: 'mrc_align_matrix'
-            },
-        },
-        {
-            model_name: 'qa_postprocess',
-            model_version: -1,
-            input_map {
-                key: 'e2e_start_logits',
-                value: 'mrc_start_logits'
-            },
-            input_map {
-                key: 'e2e_end_logits',
-                value: 'mrc_end_logits'
-            },
-            input_map {
-                key: 'e2e_input_ids',
-                value: 'mrc_input_ids'
-            },
-            input_map {
-                key: 'e2e_align_matrix',
-                value: 'mrc_align_matrix'
-            },
-            input_map {
-                key: 'final_retrieval_score',
-                value: 'retrieval_scores_pipeline'
-            },
-            output_map {
-                key: 'answer',
-                value: 'e2e_answer'
-            },
         }
     ]
 }

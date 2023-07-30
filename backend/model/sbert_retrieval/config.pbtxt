@@ -31,7 +31,7 @@ input [
         name: 'bm25_scores',
         data_type: TYPE_FP32,
         dims: [-1]
-    },
+    }
 ]
 output [
     {

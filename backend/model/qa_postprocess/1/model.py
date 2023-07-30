@@ -50,6 +50,7 @@ class TritonPythonModel:
             input_ids = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[2]).as_numpy())
             align_matrix = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[3]).as_numpy())
             retrieval_scores = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[4]).as_numpy())
+            self.logger.log_info(retrieval_scores.size())
             words_length = torch.sum(align_matrix, dim=-1).to(torch.int32)
             best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits, retrieval_scores)
             self.logger.log_info(f"Start location: {start_location} \n" + 

@@ -72,6 +72,7 @@ class TritonPythonModel:
             output2 = pb_utils.Tensor('sentence_bert_attention_mask', np.array(output_tokenizer['attention_mask']).astype(self.output2_dtype))
             output3 = pb_utils.Tensor('sentence_bert_token_type_ids', np.array(output_tokenizer['token_type_ids']).astype(self.output3_dtype))
             output4 = pb_utils.Tensor('top_k', np.array([self.top_k_sbert]).astype(self.output4_dtype).reshape(1, -1))
+            print(f"Top k sbert: {self.top_k_sbert} -- {self.top_k_bm25}")
             output5 = pb_utils.Tensor('bm25_scoring', np.array(list(mapping_idx_score.values())).astype(self.output5_dtype).reshape(1, -1))
             responses.append(
                 pb_utils.InferenceResponse(output_tensors=[output0, output1, output2, output3, output4, output5])

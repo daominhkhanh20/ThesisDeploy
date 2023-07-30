@@ -154,6 +154,10 @@ ensemble_scheduling{
                 value: 'mrc_start_logits'
             },
             input_map {
+                key: 'final_retrieval_score',
+                value: 'retrieval_scores_pipeline'
+            },
+            input_map {
                 key: 'e2e_end_logits',
                 value: 'mrc_end_logits'
             },
@@ -164,10 +168,6 @@ ensemble_scheduling{
             input_map {
                 key: 'e2e_align_matrix',
                 value: 'mrc_align_matrix'
-            },
-            input_map {
-                key: 'final_retrieval_score',
-                value: 'retrieval_scores_pipeline'
             },
             output_map {
                 key: 'answer',
