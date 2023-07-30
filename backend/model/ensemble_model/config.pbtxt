@@ -48,6 +48,10 @@ ensemble_scheduling{
             output_map {
                 key: 'top_k',
                 value: 'top_k_selection'
+            },
+            output_map {
+                key: 'bm25_scoring',
+                value: 'bm25_score_value'
             }
         },
         {
@@ -73,9 +77,17 @@ ensemble_scheduling{
                 key: 'top_k_sbert',
                 value: 'top_k_selection'
             },
+            input_map {
+                key: 'bm25_scores',
+                value: 'bm25_score_value'
+            },
             output_map {
                 key: 'sbert_index_selection',
                 value: 'final_retrieval_stage_selection'
+            },
+            output_map {
+                key: 'retrieval_scores',
+                value: 'retrieval_scores_pipeline'
             }
         },
         {
@@ -140,6 +152,10 @@ ensemble_scheduling{
             input_map {
                 key: 'e2e_start_logits',
                 value: 'mrc_start_logits'
+            },
+            input_map {
+                key: 'final_retrieval_score',
+                value: 'retrieval_scores_pipeline'
             },
             input_map {
                 key: 'e2e_end_logits',

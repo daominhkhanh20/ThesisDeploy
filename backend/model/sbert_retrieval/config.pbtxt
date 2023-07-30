@@ -26,7 +26,12 @@ input [
         name: 'top_k_sbert',
         data_type: TYPE_INT64,
         dims: [1]
-    }
+    },
+    {
+        name: 'bm25_scores',
+        data_type: TYPE_FP32,
+        dims: [-1]
+    },
 ]
 output [
     {
@@ -39,7 +44,7 @@ output [
 output [
     {
         name: 'retrieval_scores',
-        data_type: TYPE_INT64,
+        data_type: TYPE_FP32,
         dims: [-1]
     }
 ]

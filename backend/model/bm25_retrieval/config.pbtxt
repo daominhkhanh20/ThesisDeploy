@@ -46,8 +46,8 @@ output [
 
 output [
     {
-        name: 'bm25_scores',
-        data_type: TYPE_FLOAT32,
+        name: 'bm25_scoring',
+        data_type: TYPE_FP32,
         dims: [1]
     }
 ]
