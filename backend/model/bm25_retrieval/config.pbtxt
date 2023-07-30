@@ -48,7 +48,7 @@ output [
     {
         name: 'bm25_scoring',
         data_type: TYPE_FP32,
-        dims: [1]
+        dims: [-1]
     }
 ]
 
