@@ -84,7 +84,7 @@ parameters: [
     {
         key: 'top_k_sbert',
         value: {
-            string_value: '2'
+            string_value: '3'
         }
     }
 ]

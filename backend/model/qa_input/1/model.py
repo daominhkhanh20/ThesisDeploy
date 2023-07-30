@@ -54,6 +54,8 @@ class TritonPythonModel:
         for request in requests:
             index_selections = pb_utils.get_input_tensor_by_name(request, self.input_names[0]).as_numpy()[0]
             self.logger.log_info(f"Sbert index selection: {index_selections}")
+            for idx in index_selections:
+                self.logger.log_info(f"{idx} -- {self.list_documents[idx]}")
             question = pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
             input_feature_raw = make_input_feature_qa(
                 questions=[question] * len(index_selections),

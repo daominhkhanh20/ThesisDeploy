@@ -3,12 +3,14 @@ import numpy as np
 import json
 import numpy as np 
 import os
-from e2eqavn.processor import BM25Scoring
+from e2eqavn.pipeline import E2EQuestionAnsweringPipeline
+from e2eqavn.retrieval import *
 from e2eqavn.documents import Corpus
 from e2eqavn.utils.io import load_json_data, load_yaml_file
 from e2eqavn.keywords import *
 from sentence_transformers import SentenceTransformer
 import sys 
+from unicodedata import normalize
 sys.stdout.reconfigure(encoding="utf-8")
 
 
@@ -25,7 +27,10 @@ class TritonPythonModel:
             path_data=config_pipeline[DATA][PATH_TRAIN],
             **config_pipeline.get(CONFIG_DATA, {})
         )
-        self.bm25_scoring = BM25Scoring(corpus=[doc.document_context for doc in corpus.list_document])
+        bm25_retrieval = BM25Retrieval(corpus=corpus)
+        self.pipeline = E2EQuestionAnsweringPipeline(
+            retrieval=[bm25_retrieval]
+        )
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
                 model_config, 'index_selection'
@@ -58,13 +63,24 @@ class TritonPythonModel:
         )
         self.logger = pb_utils.Logger
         self.encoder = SentenceTransformer('khanhbk20/vn-sentence-embedding', device='cpu')
+    
+    def get_result(self, sentence):
+        result = self.pipeline.run(
+            queries=sentence,
+            top_k_bm25=self.top_k_bm25
+        )
+        mapping_idx_score = {}
+        for doc in result['documents'][0]:
+            mapping_idx_score[doc.index] = doc.bm25_score
+        return mapping_idx_score
         
     def execute(self, requests):
         responses = []
         for request in requests:
             in_0 = pb_utils.get_input_tensor_by_name(request, 'question')
             sentence = in_0.as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
-            mapping_idx_score = self.bm25_scoring.get_top_k(sentence, self.top_k_bm25, normalize=True)
+            sentence = normalize("NFC", sentence)
+            mapping_idx_score = self.get_result(sentence)
             self.logger.log_info(f"BM25 mapping score: {mapping_idx_score}")
             output_tokenizer = self.encoder.tokenize([sentence])
             output0 = pb_utils.Tensor('index_selection', np.array(list(mapping_idx_score.keys())).astype(self.output0_dtype).reshape(1, -1))
