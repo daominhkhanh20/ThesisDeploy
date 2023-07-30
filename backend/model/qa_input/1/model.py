@@ -25,8 +25,8 @@ class TritonPythonModel:
         )
         self.list_documents = [doc.document_context for doc in corpus.list_document]
         self.qa_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-        self.input_names = ['qa_document_indexs', 'query_user']
-        self.output_names = ['input_ids', 'attention_mask', 'align_matrix']
+        self.input_names = ['qa_document_indexs', 'query_user', 'score']
+        self.output_names = ['input_ids', 'attention_mask', 'align_matrix', 'score_reshape']
         self.data_collator = DataCollatorCustom(tokenizer=self.qa_tokenizer, mode_triton=True)
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
@@ -67,6 +67,7 @@ class TritonPythonModel:
             output0 = pb_utils.Tensor(self.output_names[0], np.array(input_features[self.output_names[0]]))
             output1 = pb_utils.Tensor(self.output_names[1], np.array(input_features[self.output_names[1]]))
             output2 = pb_utils.Tensor(self.output_names[2], np.array(input_features[self.output_names[2]]))
+            
             responses.append(
                 pb_utils.InferenceResponse(output_tensors=[output0, output1, output2])
             )

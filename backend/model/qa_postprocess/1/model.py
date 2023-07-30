@@ -19,14 +19,17 @@ class TritonPythonModel:
         )
         self.logger = pb_utils.Logger
         
-    def get_best_choice(self, start_logits, end_logits, retrieval_scores):
+    def get_best_choice(self, start_logits, end_logits, retrieval_scores=None):
         start_logits = torch.softmax(start_logits, dim=-1)
         end_logits = torch.softmax(end_logits, dim=-1)
         
         start_scores, start_idxs = torch.max(start_logits, dim=-1)
         end_scores, end_idxs = torch.max(end_logits, dim=-1)
         reader_scores = torch.mul(start_scores.reshape(-1), end_scores.reshape(-1))
-        total_scores = torch.mul(reader_scores.reshape(-1), retrieval_scores.reshape(-1))
+        if retrieval_scores is not None:
+            total_scores = torch.mul(reader_scores.reshape(-1), retrieval_scores.reshape(-1))
+        else:
+            total_scores = reader_scores
         self.logger.log_info(f"Start score: {start_scores} \n" + 
                              f"End score: {end_scores}\n" + 
                              f"Retrieval score: {retrieval_scores}\n" +
@@ -49,10 +52,10 @@ class TritonPythonModel:
             end_logits = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy())
             input_ids = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[2]).as_numpy())
             align_matrix = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[3]).as_numpy())
-            retrieval_scores = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[4]).as_numpy())
-            self.logger.log_info(retrieval_scores.size())
+            # retrieval_scores = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[4]).as_numpy())
+            # self.logger.log_info(retrieval_scores.size())
             words_length = torch.sum(align_matrix, dim=-1).to(torch.int32)
-            best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits, retrieval_scores)
+            best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits)
             self.logger.log_info(f"Start location: {start_location} \n" + 
                              f"End location: {end_location}\n"
                              )

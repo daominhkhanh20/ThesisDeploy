@@ -23,17 +23,27 @@ output [
     name: "start_logits"
     data_type: TYPE_FP32
     dims: [-1]
-  },
+  }
+]
+
+output [
   {   
     name: "end_logits"
     data_type: TYPE_FP32
     dims: [-1]
-  },
+  }
+]
+
+output [
   {   
     name: "input_ids"
     data_type: TYPE_INT64
     dims: [-1]
-  },
+  }
+]
+
+
+output [
   {   
     name: "align_matrix"
     data_type: TYPE_FP32
