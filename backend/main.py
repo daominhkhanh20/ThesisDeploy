@@ -39,7 +39,6 @@ async def root():
 
 @app.post('/answer')
 def answer_question(question: Message):
-    print(question.message)
     # input_feature = np.array([bytes(question.message, 'utf8')], dtype=np.bytes_).reshape(1, 1)
     
     # input0 = tritonhttpclient.InferInput(INPUT_NAMES[0], input_feature.shape, np_to_triton_dtype(input_feature.dtype))

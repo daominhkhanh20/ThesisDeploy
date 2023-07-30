@@ -51,6 +51,11 @@ class TritonPythonModel:
                 model_config, 'top_k'
             )['data_type']
         )
+        self.output5_dtype = pb_utils.triton_string_to_numpy(
+            pb_utils.get_output_config_by_name(
+                model_config, 'bm25_scores'
+            )['data_type']
+        )
         self.logger = pb_utils.Logger
         self.encoder = SentenceTransformer('khanhbk20/vn-sentence-embedding', device='cpu')
         
@@ -59,7 +64,7 @@ class TritonPythonModel:
         for request in requests:
             in_0 = pb_utils.get_input_tensor_by_name(request, 'question')
             sentence = in_0.as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
-            mapping_idx_score = self.bm25_scoring.get_top_k(sentence, self.top_k_bm25)
+            mapping_idx_score = self.bm25_scoring.get_top_k(sentence, self.top_k_bm25, normalize=True)
             self.logger.log_info(f"BM25 mapping score: {mapping_idx_score}")
             output_tokenizer = self.encoder.tokenize([sentence])
             output0 = pb_utils.Tensor('index_selection', np.array(list(mapping_idx_score.keys())).astype(self.output0_dtype).reshape(1, -1))
@@ -67,9 +72,9 @@ class TritonPythonModel:
             output2 = pb_utils.Tensor('sentence_bert_attention_mask', np.array(output_tokenizer['attention_mask']).astype(self.output2_dtype))
             output3 = pb_utils.Tensor('sentence_bert_token_type_ids', np.array(output_tokenizer['token_type_ids']).astype(self.output3_dtype))
             output4 = pb_utils.Tensor('top_k', np.array([self.top_k_sbert]).astype(self.output4_dtype).reshape(1, -1))
-            
+            output5 = pb_utils.Tensor('bm25_scores', np.array(list(mapping_idx_score.values())).astype(self.output5_dtype).reshape(1, -1))
             responses.append(
-                pb_utils.InferenceResponse(output_tensors=[output0, output1, output2, output3, output4])
+                pb_utils.InferenceResponse(output_tensors=[output0, output1, output2, output3, output4, output5])
             )             
         return responses
 

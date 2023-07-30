@@ -4,6 +4,7 @@ import './normal.css'
 import React from 'react';
 import { useState, useEffect } from 'react'
 import ChatMessage from './components/ChatMessage';
+import { getAnswer } from './services/Api';
 
 function App() {
 
@@ -30,27 +31,35 @@ function App() {
     // fetch response to the api combining the chat log
     // array of messages and sending it as a message to localhost:3000 as a POST
     // LISTENING ON PORT 3080
+    console.log("Chat logs: ", chatLogNew);
 
-    const messages = chatLogNew.map((message) => message.message).join("\n") // looping through messages after setting and joining together
-    const users = chatLogNew.map((user) => user.user).join("\n")
-    console.log("Users array chat: ", users)
-
-    const response = await fetch("http://0.0.0.0:4000/answer", {
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Credentials": "true", 
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: messages,
-        users: users,
-      })
-    });
+    // const messages = chatLogNew.map((message) => message.message).join("\n") // looping through messages after setting and joining together
+    // const users = chatLogNew.map((user) => user.user).join("\n")
+    // console.log({messages, users});
+    // const response = await fetch("http://0.0.0.0:4000/answer", {
+    //   method: "POST",
+    //   headers: {
+    //     "Access-Control-Allow-Credentials": "true", 
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify({
+    //     message: messages,
+    //     users: users,
+    //   })
+    // });
+    const response = await getAnswer({
+          message: input,
+          users: 'User',
+        });
+    console.log("Res body: ", response.data);
 
     // CHAT GPT RESPONSE
-    const data = await response.json();
-    setChatLog([...chatLogNew, { user: "Bot", message: `${data.message}` }])
+    // const data = await response.json();
+    const data = response.data;
+    console.log(data)
+    setChatLog([...chatLogNew, { user: "Bot", message: `${data?.message}` }])
     console.log(data.message);
+
   }
 
   return (

@@ -38,7 +38,7 @@ output [
 
 output [
     {
-        name: 'sbert_input_ids',
+        name: 'retrieval_scores',
         data_type: TYPE_INT64,
         dims: [-1]
     }

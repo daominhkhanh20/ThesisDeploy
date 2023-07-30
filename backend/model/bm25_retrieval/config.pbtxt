@@ -44,6 +44,14 @@ output [
     }
 ]
 
+output [
+    {
+        name: 'bm25_scores',
+        data_type: TYPE_FLOAT32,
+        dims: [1]
+    }
+]
+
 instance_group [
     { 
         kind: KIND_CPU 
@@ -70,13 +78,13 @@ parameters: [
     {
         key: 'top_k_bm25',
         value: {
-            string_value: '10'
+            string_value: '8'
         }
     },
     {
         key: 'top_k_sbert',
         value: {
-            string_value: '3'
+            string_value: '2'
         }
     }
 ]

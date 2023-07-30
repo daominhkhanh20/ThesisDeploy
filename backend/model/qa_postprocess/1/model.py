@@ -10,7 +10,7 @@ class TritonPythonModel:
         model_config = json.loads(args['model_config'])
         tokenizer_name = model_config['parameters']['tokenizer_name']['string_value']
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-        self.input_names = ['e2e_start_logits', 'e2e_end_logits', 'e2e_input_ids', 'e2e_align_matrix']
+        self.input_names = ['e2e_start_logits', 'e2e_end_logits', 'e2e_input_ids', 'e2e_align_matrix', 'final_retrieval_score']
         self.output_names = ['answer']
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
@@ -19,15 +19,17 @@ class TritonPythonModel:
         )
         self.logger = pb_utils.Logger
         
-    def get_best_choice(self, start_logits, end_logits):
+    def get_best_choice(self, start_logits, end_logits, retrieval_scores):
         start_logits = torch.softmax(start_logits, dim=-1)
         end_logits = torch.softmax(end_logits, dim=-1)
         
         start_scores, start_idxs = torch.max(start_logits, dim=-1)
         end_scores, end_idxs = torch.max(end_logits, dim=-1)
-        total_scores = torch.mul(start_scores.reshape(-1), end_scores.reshape(-1))
+        reader_scores = torch.mul(start_scores.reshape(-1), end_scores.reshape(-1))
+        total_scores = torch.mul(reader_scores.reshape(-1), retrieval_scores.reshape(-1))
         self.logger.log_info(f"Start score: {start_scores} \n" + 
                              f"End score: {end_scores}\n" + 
+                             f"Retrieval score: {retrieval_scores}\n" +
                              f"Final score: {total_scores}")
         best_index = torch.argmax(total_scores)
         return best_index, start_idxs[best_index].item(), end_idxs[best_index].item()
@@ -47,8 +49,9 @@ class TritonPythonModel:
             end_logits = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy())
             input_ids = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[2]).as_numpy())
             align_matrix = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[3]).as_numpy())
+            retrieval_scores = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[4]).as_numpy())
             words_length = torch.sum(align_matrix, dim=-1).to(torch.int32)
-            best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits)
+            best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits, retrieval_scores)
             self.logger.log_info(f"Start location: {start_location} \n" + 
                              f"End location: {end_location}\n"
                              )
