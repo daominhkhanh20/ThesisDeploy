@@ -13,7 +13,7 @@ input_name = ['query']
 output_name = ['e2e_answer']
 # output_name = ['e2e_answer']
 
-def run_inference(sentence, model_name='ensemble_model', url='0.0.0.0:8000', model_version='1'):
+def run_inference(sentence, model_name='ensemble_model', url='149.36.0.34:38021', model_version='1'):
     triton_client = tritonhttpclient.InferenceServerClient(
         url=url, verbose=1
     )
