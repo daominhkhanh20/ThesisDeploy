@@ -8,15 +8,11 @@ import { getAnswer } from './services/Api';
 
 function App() {
 
-  // add state for input and chat log
   const [input, setInput] = useState("")
   const [models, setModels] = useState([])
   const [chatLog, setChatLog] = useState([])
 
-  // use effect run once when app loads
 
-
-  // clear chats
   function clearChat() {
     setChatLog([])
   }
@@ -24,37 +20,18 @@ function App() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    let chatLogNew = [...chatLog, { user: "User", message: `${input}` }]// spread operator and adding input to chat log
+    let chatLogNew = [...chatLog, { user: "User", message: `${input}` }]
     setInput("") // setting input to blank
     setChatLog(chatLogNew)
 
-    // fetch response to the api combining the chat log
-    // array of messages and sending it as a message to localhost:3000 as a POST
-    // LISTENING ON PORT 3080
     console.log("Chat logs: ", chatLogNew);
 
-    // const messages = chatLogNew.map((message) => message.message).join("\n") // looping through messages after setting and joining together
-    // const users = chatLogNew.map((user) => user.user).join("\n")
-    // console.log({messages, users});
-    // const response = await fetch("http://0.0.0.0:4000/answer", {
-    //   method: "POST",
-    //   headers: {
-    //     "Access-Control-Allow-Credentials": "true", 
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     message: messages,
-    //     users: users,
-    //   })
-    // });
     const response = await getAnswer({
           message: input,
           users: 'User',
         });
     console.log("Res body: ", response.data);
 
-    // CHAT GPT RESPONSE
-    // const data = await response.json();
     const data = response.data;
     console.log(data)
     setChatLog([...chatLogNew, { user: "Bot", message: `${data?.message}` }])
