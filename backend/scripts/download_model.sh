@@ -8,6 +8,7 @@ mkdir model/qa_model/1
 mv sbert/model.pt model/sbert_retrieval/1
 mv qa/model.pt model/qa_model/1
 mv corpus.json model/corpus.json
+mv dev.tar.gz model
 rm -r sbert
 rm -r qa
 rm model-compile-v$VERSION.zip
