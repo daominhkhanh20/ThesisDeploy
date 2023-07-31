@@ -2,6 +2,7 @@ rm -r ThesisDeploy
 git clone https://github.com/daominhkhanh20/ThesisDeploy.git
 cd ThesisDeploy
 git checkout develop_pipeline
+git checkout develop_gpu
 conda activate dev
 VERSION="5"
 export KAGGLE_USERNAME='daominhkhanh'
@@ -21,4 +22,6 @@ pip install conda-pack
 pip uninstall e2eqavn -y
 pip install e2eqavn==0.1.9
 conda-pack -n dev -o backend/model/dev.tar.gz
+cd backend
 mkdir model/ensemble_model/1
+tritonserver --model-repository=model
