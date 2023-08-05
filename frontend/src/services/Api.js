@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const getAnswer = async (data) => {
     try{
-        return await axios.post('http://0.0.0.0:5000/answer', data, {
+        return await axios.post('http://185.32.161.60:5000/43632', data, {
             headers: {
                 "Access-Control-Allow-Credentials": "true", 
                 "Content-Type": "application/json"
