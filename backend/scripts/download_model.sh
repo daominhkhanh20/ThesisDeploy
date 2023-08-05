@@ -3,7 +3,6 @@ git clone https://github.com/daominhkhanh20/ThesisDeploy.git
 cd ThesisDeploy
 git checkout develop_pipeline
 git checkout develop_gpu
-conda activate dev
 VERSION="5"
 export KAGGLE_USERNAME='daominhkhanh'
 export KAGGLE_KEY="53d2021e6812290870fc3520cbeee5ea"
