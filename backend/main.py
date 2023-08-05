@@ -51,4 +51,7 @@ def answer_question(question: Message):
             )
         )
     response = triton_client.infer(model_name=MODEL_NAME, model_version=MODEL_VERSION, inputs=[input0], outputs=list_output)
-    return {'message': response.as_numpy('e2e_answer')[0][0]}
+    answer = response.as_numpy('e2e_answer')[0][0]
+    if answer == "":
+        answer = "Hiện tại hệ thống chưa trả lời được câu hỏi của bạn!"
+    return {'message': answer}
