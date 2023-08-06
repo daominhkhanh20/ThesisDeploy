@@ -56,12 +56,12 @@ class TritonPythonModel:
             self.logger.log_info(f"Sbert index selection: {index_selections}")
             for idx in index_selections:
                 self.logger.log_info(f"{idx} -- {self.list_documents[idx]}")
-            question = pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
+            question = pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy().astype(np.bytes_)[0][0].decode('utf-8').lower()
             input_feature_raw = make_input_feature_qa(
                 questions=[question] * len(index_selections),
                 documents=[self.list_documents[idx] for idx in index_selections],
                 tokenizer=self.qa_tokenizer,
-                max_length=400
+                max_length=368
             )
             input_features = self.data_collator(input_feature_raw)
             for key, value in input_features.items():

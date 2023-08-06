@@ -57,7 +57,8 @@ class TritonPythonModel:
             words_length = torch.sum(align_matrix, dim=-1).to(torch.int32)
             best_choice, start_location, end_location = self.get_best_choice(start_logits, end_logits)
             self.logger.log_info(f"Start location: {start_location} \n" + 
-                             f"End location: {end_location}\n"
+                             f"End location: {end_location}\n" + 
+                             f"Best document index: {best_choice}"
                              )
             answer = self.parser_answer(
                 input_ids=input_ids[best_choice, :].reshape(-1),

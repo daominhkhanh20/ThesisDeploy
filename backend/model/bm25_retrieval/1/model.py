@@ -79,7 +79,7 @@ class TritonPythonModel:
         for request in requests:
             in_0 = pb_utils.get_input_tensor_by_name(request, 'question')
             sentence = in_0.as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
-            sentence = normalize("NFC", sentence)
+            sentence = normalize("NFC", sentence).lower()
             mapping_idx_score = self.get_result(sentence)
             self.logger.log_info(f"BM25 mapping score: {mapping_idx_score}")
             output_tokenizer = self.encoder.tokenize([sentence])
