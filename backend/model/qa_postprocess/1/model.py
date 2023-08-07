@@ -31,7 +31,9 @@ class TritonPythonModel:
         else:
             total_scores = reader_scores
         self.logger.log_info(f"Start score: {start_scores} \n" + 
+                             f"Start idxs: {start_idxs}\n" + 
                              f"End score: {end_scores}\n" + 
+                             f"End idxs: {end_idxs}\n" + 
                              f"Retrieval score: {retrieval_scores}\n" +
                              f"Final score: {total_scores}")
         best_index = torch.argmax(total_scores)
