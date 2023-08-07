@@ -1,5 +1,5 @@
 name: 'sbert_retrieval'
-platform: 'python'
+backend: 'python'
 max_batch_size: 4
 input [
     {
@@ -25,4 +25,10 @@ instance_group [
     { 
         kind: KIND_GPU
     }
+]
+parameters: [
+     {
+	    key: "EXECUTION_ENV_PATH",
+        value: {string_value: "model/dev.tar.gz"}
+     }
 ]

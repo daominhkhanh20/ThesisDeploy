@@ -37,6 +37,6 @@ def run_inference(sentence, model_name='ensemble_model', url='149.36.0.213:40466
 if __name__ == '__main__':
     import time 
     start_time = time.time()
-    sentence = 'Lý thuyết thông tin là là gì?'
+    sentence = 'học bổng là gì?'
     run_inference(sentence)
     print(time.time() - start_time)
