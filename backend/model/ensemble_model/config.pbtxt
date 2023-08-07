@@ -32,54 +32,18 @@ ensemble_scheduling{
             output_map {
                 key: 'index_selection',
                 value: 'ml_index_selection'
-            },
-            output_map {
-                key: 'sentence_bert_input_ids',
-                value: 'sbert_ids'
-            },
-            output_map {
-                key: 'sentence_bert_attention_mask',
-                value: 'sbert_mask'
-            },
-            output_map {
-                key: 'sentence_bert_token_type_ids',
-                value: 'sbert_token_ids'
-            },
-            output_map {
-                key: 'top_k',
-                value: 'top_k_selection'
-            },
-            output_map {
-                key: 'bm25_scoring',
-                value: 'bm25_score_value'
             }
         },
         {
             model_name: 'sbert_retrieval',
             model_version: -1,
             input_map {
-                key: 'sbert_input_ids',
-                value: 'sbert_ids'
-            },
-            input_map {
-                key: 'sbert_attention_mask',
-                value: 'sbert_mask'
-            },
-            input_map {
-                key: 'sbert_token_type_ids',
-                value: 'sbert_token_ids'
+                key: 'question1',
+                value: 'query'
             },
             input_map {
                 key: 'bm25_index_selection',
                 value: 'ml_index_selection'
-            },
-            input_map {
-                key: 'top_k_sbert',
-                value: 'top_k_selection'
-            },
-            input_map {
-                key: 'bm25_scores',
-                value: 'bm25_score_value'
             },
             output_map {
                 key: 'sbert_index_selection',

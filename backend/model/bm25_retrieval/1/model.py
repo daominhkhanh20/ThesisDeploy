@@ -30,38 +30,12 @@ class TritonPythonModel:
         self.pipeline = E2EQuestionAnsweringPipeline(
             retrieval=[bm25_retrieval]
         )
+        self.logger = pb_utils.Logger
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
                 model_config, 'index_selection'
             )['data_type']
         )
-        self.output1_dtype = pb_utils.triton_string_to_numpy(
-            pb_utils.get_output_config_by_name(
-                model_config, 'sentence_bert_input_ids'
-            )['data_type']
-        )
-        self.output2_dtype = pb_utils.triton_string_to_numpy(
-            pb_utils.get_output_config_by_name(
-                model_config, 'sentence_bert_attention_mask'
-            )['data_type']
-        )
-        self.output3_dtype = pb_utils.triton_string_to_numpy(
-            pb_utils.get_output_config_by_name(
-                model_config, 'sentence_bert_token_type_ids'
-            )['data_type']
-        )
-        self.output4_dtype = pb_utils.triton_string_to_numpy(
-            pb_utils.get_output_config_by_name(
-                model_config, 'top_k'
-            )['data_type']
-        )
-        self.output5_dtype = pb_utils.triton_string_to_numpy(
-            pb_utils.get_output_config_by_name(
-                model_config, 'bm25_scoring'
-            )['data_type']
-        )
-        self.logger = pb_utils.Logger
-        self.encoder = SentenceTransformer('khanhbk20/vn-sentence-embedding', device='cpu')
     
     def get_result(self, sentence):
         result = self.pipeline.run(
@@ -81,16 +55,10 @@ class TritonPythonModel:
             sentence = normalize("NFC", sentence).lower()
             mapping_idx_score = self.get_result(sentence)
             self.logger.log_info(f"BM25 mapping score: {mapping_idx_score}")
-            output_tokenizer = self.encoder.tokenize([sentence])
             output0 = pb_utils.Tensor('index_selection', np.array(list(mapping_idx_score.keys())).astype(self.output0_dtype).reshape(1, -1))
-            output1 = pb_utils.Tensor('sentence_bert_input_ids', np.array(output_tokenizer['input_ids']).astype(self.output1_dtype))
-            output2 = pb_utils.Tensor('sentence_bert_attention_mask', np.array(output_tokenizer['attention_mask']).astype(self.output2_dtype))
-            output3 = pb_utils.Tensor('sentence_bert_token_type_ids', np.array(output_tokenizer['token_type_ids']).astype(self.output3_dtype))
-            output4 = pb_utils.Tensor('top_k', np.array([self.top_k_sbert]).astype(self.output4_dtype).reshape(1, -1))
             print(f"Top k sbert: {self.top_k_sbert} -- {self.top_k_bm25}")
-            output5 = pb_utils.Tensor('bm25_scoring', np.array(list(mapping_idx_score.values())).astype(self.output5_dtype).reshape(1, -1))
             responses.append(
-                pb_utils.InferenceResponse(output_tensors=[output0, output1, output2, output3, output4, output5])
+                pb_utils.InferenceResponse(output_tensors=[output0])
             )             
         return responses
 
