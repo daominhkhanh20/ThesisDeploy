@@ -9,7 +9,7 @@ class TritonPythonModel:
     def initialize(self, args):
         model_config = json.loads(args['model_config'])
         tokenizer_name = model_config['parameters']['tokenizer_name']['string_value']
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.tokenizer = AutoTokenizer.from_pretrained('khanhbk20/mrc_large')
         self.input_names = ['e2e_start_logits', 'e2e_end_logits', 'e2e_input_ids', 'e2e_align_matrix', 'final_retrieval_score']
         self.output_names = ['answer']
         self.output0_dtype = pb_utils.triton_string_to_numpy(
@@ -18,6 +18,7 @@ class TritonPythonModel:
             )['data_type']
         )
         self.logger = pb_utils.Logger
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
     def get_best_choice(self, start_logits, end_logits, retrieval_scores=None):
         start_logits = torch.softmax(start_logits, dim=-1)
@@ -52,10 +53,10 @@ class TritonPythonModel:
     def execute(self, requests):
         responess = []
         for request in requests:
-            start_logits = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[0]).as_numpy())
-            end_logits = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy())
-            input_ids = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[2]).as_numpy())
-            align_matrix = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[3]).as_numpy())
+            start_logits = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[0]).as_numpy()).to(self.device)
+            end_logits = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy()).to(self.device)
+            input_ids = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[2]).as_numpy()).to(self.device)
+            align_matrix = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[3]).as_numpy()).to(self.device)
             # retrieval_scores = torch.tensor(pb_utils.get_input_tensor_by_name(request, self.input_names[4]).as_numpy())
             # self.logger.log_info(retrieval_scores.size())
             words_length = torch.sum(align_matrix, dim=-1).to(torch.int32)

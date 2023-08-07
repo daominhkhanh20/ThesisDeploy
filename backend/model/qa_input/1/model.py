@@ -25,7 +25,7 @@ class TritonPythonModel:
             **config_pipeline.get(CONFIG_DATA, {})
         )
         self.list_documents = [doc.document_context for doc in corpus.list_document]
-        self.qa_tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.qa_tokenizer = AutoTokenizer.from_pretrained('khanhbk20/mrc_large')
         self.input_names = ['qa_document_indexs', 'query_user', 'score']
         self.output_names = ['input_ids', 'attention_mask', 'align_matrix', 'score_reshape']
         self.data_collator = DataCollatorCustom(tokenizer=self.qa_tokenizer, mode_triton=True)
