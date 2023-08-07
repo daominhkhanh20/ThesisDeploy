@@ -43,7 +43,7 @@ class TritonPythonModel:
             sentence = in_0.as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
             sentence = normalize("NFC", sentence).lower()
             index_selection = pb_utils.get_input_tensor_by_name(request, 'bm25_index_selection').as_numpy()
-            output0 = self.get_result([sentence], index_selection=index_selection)
+            output0 = self.get_result(queries=[sentence], index_selection=index_selection)
             self.logger.log_info(f"Sbert selection: {output0}")
             responses.append(
                 pb_utils.InferenceResponse(output_tensors=[output0])
