@@ -1,5 +1,5 @@
 name: 'sbert_retrieval'
-platform: 'pytorch_libtorch'
+platform: 'python'
 max_batch_size: 4
 input [
     {
