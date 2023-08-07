@@ -38,6 +38,8 @@ class TritonPythonModel:
         return best_index, start_idxs[best_index].item(), end_idxs[best_index].item()
     
     def parser_answer(self, input_ids, words_length, start_location, end_location):
+        if start_location == end_location:
+            return " "
         answer_start_idx = sum(words_length[: start_location])
         answer_end_idx = sum(words_length[: end_location + 1])
         return self.tokenizer.convert_tokens_to_string(

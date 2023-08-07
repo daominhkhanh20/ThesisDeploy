@@ -1,5 +1,6 @@
 import triton_python_backend_utils as pb_utils
 import json
+import unicodedata
 import numpy as np 
 import os
 from e2eqavn.documents import Corpus
@@ -55,8 +56,9 @@ class TritonPythonModel:
             index_selections = pb_utils.get_input_tensor_by_name(request, self.input_names[0]).as_numpy()[0]
             self.logger.log_info(f"Sbert index selection: {index_selections}")
             for idx in index_selections:
-                self.logger.log_info(f"{idx} -- {self.list_documents[idx]}")
-            question = pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy().astype(np.bytes_)[0][0].decode('utf-8').lower()
+                self.logger.log_info(f"{idx} -- {self.list_documents[idx]}\n\n")
+            question = pb_utils.get_input_tensor_by_name(request, self.input_names[1]).as_numpy().astype(np.bytes_)[0][0].decode('utf-8')
+            question = unicodedata.normalize('NFC', question).lower()
             input_feature_raw = make_input_feature_qa(
                 questions=[question] * len(index_selections),
                 documents=[self.list_documents[idx] for idx in index_selections],
