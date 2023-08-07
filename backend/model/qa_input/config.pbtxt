@@ -63,6 +63,6 @@ parameters: [
     },
     {
         key: 'tokenizer_name',
-        value: {string_value: 'khanhbk20/mrc_testing'}
+        value: {string_value: 'khanhbk20/mrc_large'}
      }
 ]
