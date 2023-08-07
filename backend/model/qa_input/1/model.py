@@ -16,13 +16,12 @@ sys.stdout.reconfigure(encoding="utf-8")
 class TritonPythonModel:
     def initialize(self, args):
         model_config = json.loads(args['model_config'])
-        path_json_data = model_config['parameters']['path_corpus']['string_value']
-        path_config = model_config['parameters']['path_config']['string_value']
-        tokenizer_name = model_config['parameters']['tokenizer_name']['string_value']
-        config_pipeline = load_yaml_file(path_config)
+        # path_json_data = model_config['parameters']['path_corpus']['string_value']
+        # path_config = model_config['parameters']['path_config']['string_value']
+        # tokenizer_name = model_config['parameters']['tokenizer_name']['string_value']
+        # config_pipeline = load_yaml_file(path_config)
         corpus = Corpus.init_corpus(
-            path_data=config_pipeline[DATA][PATH_TRAIN],
-            **config_pipeline.get(CONFIG_DATA, {})
+            path_data='model/corpus.json'
         )
         self.list_documents = [doc.document_context for doc in corpus.list_document]
         self.qa_tokenizer = AutoTokenizer.from_pretrained('khanhbk20/mrc_large')

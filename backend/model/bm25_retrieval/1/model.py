@@ -17,15 +17,14 @@ sys.stdout.reconfigure(encoding="utf-8")
 class TritonPythonModel:
     def initialize(self, args):
         model_config = json.loads(args['model_config'])
-        path_json_data = model_config['parameters']['path_corpus']['string_value']
-        path_config = model_config['parameters']['path_config']['string_value']
+        # path_json_data = model_config['parameters']['path_corpus']['string_value']
+        # path_config = model_config['parameters']['path_config']['string_value']
         
         self.top_k_bm25 = int(model_config['parameters']['top_k_bm25']['string_value'])
         self.top_k_sbert = int(model_config['parameters']['top_k_sbert']['string_value'])
-        config_pipeline = load_yaml_file(path_config)
+        # config_pipeline = load_yaml_file(path_config)
         corpus = Corpus.init_corpus(
-            path_data=config_pipeline[DATA][PATH_TRAIN],
-            **config_pipeline.get(CONFIG_DATA, {})
+            path_data='model/corpus.json'
         )
         bm25_retrieval = BM25Retrieval(corpus=corpus)
         self.pipeline = E2EQuestionAnsweringPipeline(
