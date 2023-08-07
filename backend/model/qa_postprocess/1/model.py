@@ -8,7 +8,7 @@ from transformers import AutoTokenizer
 class TritonPythonModel:
     def initialize(self, args):
         model_config = json.loads(args['model_config'])
-        tokenizer_name = model_config['parameters']['tokenizer_name']['string_value']
+        # tokenizer_name = model_config['parameters']['tokenizer_name']['string_value']
         self.tokenizer = AutoTokenizer.from_pretrained('khanhbk20/mrc_large')
         self.input_names = ['e2e_start_logits', 'e2e_end_logits', 'e2e_input_ids', 'e2e_align_matrix', 'final_retrieval_score']
         self.output_names = ['answer']
