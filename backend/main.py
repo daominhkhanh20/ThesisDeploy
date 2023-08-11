@@ -4,6 +4,12 @@ import numpy as np
 from tritonclient.utils import np_to_triton_dtype
 import tritonhttpclient
 from pydantic import BaseModel
+from pymongo import MongoClient
+client = MongoClient(
+    "mongodb+srv://dataintergration:nhom10@cluster0.hqw7c.mongodb.net/test")
+
+database = client['chat']
+log_collection = database['log_message']
 
 class Message(BaseModel):
     message: str
@@ -39,20 +45,23 @@ async def root():
 
 @app.post('/answer')
 def answer_question(question: Message):
-    # input_feature = np.array([bytes(question.message, 'utf8')], dtype=np.bytes_).reshape(1, 1)
+    input_feature = np.array([bytes(question.message, 'utf8')], dtype=np.bytes_).reshape(1, 1)
     
-    # input0 = tritonhttpclient.InferInput(INPUT_NAMES[0], input_feature.shape, np_to_triton_dtype(input_feature.dtype))
-    # input0.set_data_from_numpy(input_feature)
-    # list_output = []
-    # for out in OUTPUT_NAMES:
-    #     list_output.append(
-    #         tritonhttpclient.InferRequestedOutput(
-    #             out, binary_data=False
-    #         )
-    #     )
-    # response = triton_client.infer(model_name=MODEL_NAME, model_version=MODEL_VERSION, inputs=[input0], outputs=list_output)
-    # answer = response.as_numpy('e2e_answer')[0][0]
-    answer = ""
+    input0 = tritonhttpclient.InferInput(INPUT_NAMES[0], input_feature.shape, np_to_triton_dtype(input_feature.dtype))
+    input0.set_data_from_numpy(input_feature)
+    list_output = []
+    for out in OUTPUT_NAMES:
+        list_output.append(
+            tritonhttpclient.InferRequestedOutput(
+                out, binary_data=False
+            )
+        )
+    response = triton_client.infer(model_name=MODEL_NAME, model_version=MODEL_VERSION, inputs=[input0], outputs=list_output)
+    answer = response.as_numpy('e2e_answer')[0][0]
     if answer in ["", " "]:
         answer = "Hiện tại hệ thống chưa trả lời được câu hỏi của bạn!"
+    log_collection.insert_one({
+        "message": question.message,
+        "answer": answer
+    })
     return {'message': answer}
