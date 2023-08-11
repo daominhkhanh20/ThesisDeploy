@@ -37,8 +37,15 @@ class TritonPythonModel:
                              f"End idxs: {end_idxs}\n" + 
                              f"Retrieval score: {retrieval_scores}\n" +
                              f"Final score: {total_scores}")
-        best_index = torch.argmax(total_scores)
+        # best_index = torch.argmax(total_scores)
+        # return best_index, start_idxs[best_index].item(), end_idxs[best_index].item()
+        _, indexs = torch.topk(total_scores.reshape(1, -1), 2, largest=True, sorted=True)
+        best_index = indexs[0][0]
+        if start_idxs[best_index].item() == 0 and end_idxs[best_index] == 0:
+            second_index = indexs[0][1]
+            return second_index, start_idxs[second_index].item(), end_idxs[second_index].item()
         return best_index, start_idxs[best_index].item(), end_idxs[best_index].item()
+
     
     def parser_answer(self, input_ids, words_length, start_location, end_location):
         if start_location == end_location:
