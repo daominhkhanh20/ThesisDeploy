@@ -1,16 +1,15 @@
 import './App.css';
 import './normal.css'
-// import setState
 import React from 'react';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef} from 'react'
 import ChatMessage from './components/ChatMessage';
 import { getAnswer } from './services/Api';
 
 function App() {
 
   const [input, setInput] = useState("")
-  const [models, setModels] = useState([])
   const [chatLog, setChatLog] = useState([])
+  const chatLogRef = useRef(null);
 
 
   function clearChat() {
@@ -21,23 +20,19 @@ function App() {
   async function handleSubmit(e) {
     e.preventDefault();
     let chatLogNew = [...chatLog, { user: "User", message: `${input}` }]
-    setInput("") // setting input to blank
+    setInput("")
     setChatLog(chatLogNew)
-
-    console.log("Chat logs: ", chatLogNew);
-
     const response = await getAnswer({
           message: input,
           users: 'User',
         });
-    console.log("Res body: ", response.data);
-
     const data = response.data;
-    console.log(data)
     setChatLog([...chatLogNew, { user: "Bot", message: `${data?.message}` }])
-    console.log(data.message);
 
   }
+  useEffect(() => {
+    chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }, [chatLog]);
 
   return (
     <div className="App">
@@ -55,7 +50,7 @@ function App() {
 
       {/* chatbox */}
       <section className="chatbox">
-        <div className="chat-log">
+        <div className="chat-log" ref={chatLogRef}>
           {chatLog.map((message, index) => {
             return (
               <ChatMessage key={index} message={message} />
