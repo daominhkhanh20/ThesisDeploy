@@ -63,6 +63,7 @@ function App() {
           }
           )}
         </div>
+ 
         {/* chat input box */}
         <div className="chat-input-holder">
           <form onSubmit={handleSubmit}>

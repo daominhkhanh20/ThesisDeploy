@@ -28,6 +28,11 @@
   padding: 10px;
 }
 
+.chat-log {
+  height: 850px; /* or any value */
+  overflow-y: scroll;
+}
+
 .side-menu-button {
   padding: 12px;
   border: 1px solid white;
