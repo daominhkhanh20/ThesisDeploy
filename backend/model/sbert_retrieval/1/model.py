@@ -20,7 +20,7 @@ class TritonPythonModel:
             path_data='model/corpus.json'
         )
         self.logger = pb_utils.Logger
-        self.sbert_retrieval = SBertRetrieval.from_pretrained(model_name_or_path='khanhbk20/sentence-embedding1')
+        self.sbert_retrieval = SBertRetrieval.from_pretrained(model_name_or_path='khanhbk20/vn-sentence-embedding')
         self.sbert_retrieval.update_embedding(corpus=corpus, path_corpus_embedding='retrieval/corpus_embedding.pth')
         self.output0_dtype = pb_utils.triton_string_to_numpy(
             pb_utils.get_output_config_by_name(
